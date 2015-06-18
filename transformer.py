@@ -4,6 +4,7 @@ import sys
 import bibtexparser
 from bibtexparser.bparser import BibTexParser
 from bibtexparser.customization import homogeneize_latex_encoding
+import datetime
 
 #The counter to keep track of how many records we've changed
 count = 0
@@ -44,6 +45,15 @@ with open(input, encoding="utf-8") as bibtex_file:
 			#If there is an author (there always should be) then make sure the capitalisation is preserved for misc entries
 			if('author' in e):
 				e['author'] = '{' + e['author'] + '}'
+			#If there is a URL date then add this as a note so it'll appear in the references
+			if('urldate' in e):
+				#We assume the date is in the format yyyy-mm-dd (as used by Mendeley
+				dateSplit = e['urldate'].split('-')
+				#Get the components of the date and format them nicely for the output
+				if(len(dateSplit) == 3):
+					date = datetime.date(int(dateSplit[0]), int(dateSplit[1]), int(dateSplit[2]))
+					note = date.strftime('Accessed: %d %b %Y')
+					e['note'] = note
 
 #Open the output database and write the modified database
 with open(output, 'w', encoding="utf-8") as bibtex_output:
