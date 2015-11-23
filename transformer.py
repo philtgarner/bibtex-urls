@@ -38,12 +38,14 @@ with open(input, encoding="utf-8") as bibtex_file:
 		if(e['type'] == 'misc'):
 			#If there is a link and no howpublished component then we can edit
 			if('link' in e and 'howpublished' not in e):
-				#Remove any back slashes, there is no need to escape characters, they 
+				#Remove any back slashes, there is no need to escape characters, they already should be escaped
 				url = e['link'].replace('\\', '')
+				url = url.replace('{', '')
+				url = url.replace('}', '')
 				howpublished = '\\url{' + url + '}'
 				e['howpublished'] = howpublished
 				count += 1
-			#If there is an author (there always should be) then make sure the capitalisation is preserved for misc entries
+			#If there is an author (there always should be) then make sure the capitalisation is preserved for misc entries that are organisations
 			if('author' in e and ',' not in e['author']):
 				e['author'] = '{' + e['author'] + '}'
 			#If there is a URL date then add this as a note so it'll appear in the references
